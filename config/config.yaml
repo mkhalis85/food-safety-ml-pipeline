@@ -1,0 +1,72 @@
+# Configuration for Food Safety ML Pipeline
+
+data:
+  raw_data_path: "data/raw/food_safety_data.csv"
+  processed_data_path: "data/processed/"
+  test_split_size: 0.2
+  val_split_size: 0.1
+  random_state: 42
+  target_column: "safety_status"
+
+preprocessing:
+  numeric_features:
+    - "temperature"
+    - "ph_level"
+    - "moisture_content"
+    - "total_plate_count"
+    - "coliform_count"
+    - "storage_time_days"
+    - "water_activity"
+  categorical_features:
+    - "food_type"
+    - "packaging_type"
+    - "supplier_id"
+  scaling_method: "standard"
+  handle_missing: "median"  # Options: median, mean, drop
+
+model:
+  type: "xgboost"  # Options: xgboost, lightgbm, random_forest, logistic_regression
+  n_estimators: 100
+  max_depth: 6
+  learning_rate: 0.1
+  random_state: 42
+  use_gpu: false
+
+hyperparameter_tuning:
+  enabled: true
+  n_trials: 50
+  timeout_seconds: 3600
+  metric: "f1"  # Options: accuracy, precision, recall, f1, roc_auc
+
+training:
+  early_stopping_rounds: 10
+  cross_validation_folds: 5
+  class_weight_balance: true
+
+evaluation:
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "roc_auc"
+    - "confusion_matrix"
+  threshold: 0.5
+
+inference:
+  model_path: "models/best_model.joblib"
+  scaler_path: "models/scaler.joblib"
+  encoder_path: "models/encoder.joblib"
+  prediction_threshold: 0.5
+
+logging:
+  level: "INFO"
+  log_dir: "logs/"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+paths:
+  base_dir: "."
+  data_dir: "data"
+  models_dir: "models"
+  logs_dir: "logs"
+  notebooks_dir: "notebooks"
